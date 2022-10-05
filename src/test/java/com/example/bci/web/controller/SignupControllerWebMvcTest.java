@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -84,12 +83,11 @@ class SignupControllerWebMvcTest {
 
     @Test
     void shouldReturnSuccessWhenSignupWithValidRequest() throws Exception {
-        var rightNowLD = LocalDate.now();
-        var rightNow = rightNowLD.toString();
+        var rightNow = LocalDate.now().toString();
         var response = SignupResponse.builder()
-                .id(new AtomicInteger(1).getAndIncrement())
+                .id(UUID.randomUUID().toString())
                 .token(UUID.randomUUID().toString())
-                .created(rightNowLD).lastLogin(rightNowLD)
+                .created(rightNow).lastLogin(rightNow)
                 .isActive(true)
                 .build();
         var request = buildSignupRequest("example@example.com");

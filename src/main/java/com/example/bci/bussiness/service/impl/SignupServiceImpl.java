@@ -1,25 +1,28 @@
 package com.example.bci.bussiness.service.impl;
 
+import com.example.bci.bussiness.entity.PhoneEntity;
+import com.example.bci.bussiness.entity.UserEntity;
 import com.example.bci.bussiness.exception.EmailAlreadyExistsException;
 import com.example.bci.bussiness.repository.UserRepository;
 import com.example.bci.bussiness.service.SignupService;
 import com.example.bci.web.request.SignupRequest;
 import com.example.bci.web.response.SignupResponse;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
+@Transactional
 public class SignupServiceImpl implements SignupService {
-    private AtomicInteger id = new AtomicInteger(1);
 
     private final UserRepository userRepository;
 
@@ -32,12 +35,35 @@ public class SignupServiceImpl implements SignupService {
             throw new EmailAlreadyExistsException(String.format("Email %s already exists", email));
         }
 
-        LocalDate rightNow = LocalDate.now();
+        var entity = buildEntity(request);
+        userRepository.save(entity);
+
         return SignupResponse.builder()
-                .id(id.getAndIncrement())
+                .id(entity.getId())
                 .token(UUID.randomUUID().toString())
-                .created(rightNow).lastLogin(rightNow)
-                .isActive(true)
+                .created(entity.getCreated().toString()).lastLogin(entity.getLastLogin().toString())
+                .isActive(entity.getIsActive())
+                .build();
+    }
+
+    private UserEntity buildEntity(SignupRequest request) {
+        var email = request.getEmail();
+        var rightNow = LocalDateTime.now();
+        return UserEntity.builder()
+                .id(UUID.randomUUID().toString())
+                .name(request.getName())
+                .email(email)
+                .password(request.getPassword())
+                .phones(request.getPhones()
+                        .stream()
+                        .map(e -> PhoneEntity.builder()
+                                .countryCode(e.getCountryCode())
+                                .cityCode(e.getCityCode())
+                                .number(e.getNumber())
+                                .build()
+                        ).collect(Collectors.toList()))
+                .created(rightNow)
+                .lastLogin(rightNow)
                 .build();
     }
 }

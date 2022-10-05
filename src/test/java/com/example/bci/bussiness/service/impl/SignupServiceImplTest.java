@@ -2,7 +2,6 @@ package com.example.bci.bussiness.service.impl;
 
 import com.example.bci.bussiness.exception.EmailAlreadyExistsException;
 import com.example.bci.bussiness.repository.UserRepository;
-import com.example.bci.bussiness.service.SignupService;
 import com.example.bci.web.request.Phone;
 import com.example.bci.web.request.SignupRequest;
 import org.junit.jupiter.api.Assertions;
@@ -12,7 +11,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -34,7 +33,7 @@ public class SignupServiceImplTest {
         var request = buildSignupRequest("example@example.com");
 
         var uuidPattern = Pattern.compile("([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})");
-        var rightNow = LocalDate.now();
+        var rightNow = LocalDateTime.now().toString();
         var response = signupService.signup(request);
 
         assertThat(response.getId(), is(notNullValue()));
