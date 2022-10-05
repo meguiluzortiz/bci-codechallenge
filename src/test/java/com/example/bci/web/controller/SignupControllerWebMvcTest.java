@@ -1,8 +1,8 @@
 package com.example.bci.web.controller;
 
+import com.example.bci.bussiness.repository.UserRepository;
 import com.example.bci.bussiness.service.SignupService;
 import com.example.bci.bussiness.service.impl.SignupServiceImpl;
-import com.example.bci.web.controller.SignupController;
 import com.example.bci.web.request.Phone;
 import com.example.bci.web.request.SignupRequest;
 import com.example.bci.web.response.SignupResponse;
@@ -14,6 +14,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
@@ -27,6 +28,7 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -38,6 +40,9 @@ class SignupControllerWebMvcTest {
 
     @SpyBean
     SignupService signupService;
+
+    @MockBean
+    UserRepository userRepository;
 
     @Autowired
     MockMvc mockMvc;
@@ -64,9 +69,11 @@ class SignupControllerWebMvcTest {
 
     @Test
     void shouldReturnBadRequestWhenSignupWithValidRequestButExistingEmail() throws Exception {
-        var email = "eatatjoes@example.com";
+        var email = "eatatjoes@acme.com";
         var request = buildSignupRequest(email);
         var errors = new String[] { String.format("Email %s already exists", email) };
+
+        when(userRepository.existsByEmail(email)).thenReturn(true);
 
         performPost(request)
                 .andExpect(status().isBadRequest())

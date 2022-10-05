@@ -1,6 +1,7 @@
 package com.example.bci.bussiness.service.impl;
 
 import com.example.bci.bussiness.exception.EmailAlreadyExistsException;
+import com.example.bci.bussiness.repository.UserRepository;
 import com.example.bci.bussiness.service.SignupService;
 import com.example.bci.web.request.Phone;
 import com.example.bci.web.request.SignupRequest;
@@ -8,6 +9,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
@@ -16,12 +18,16 @@ import java.util.regex.Pattern;
 
 import static org.hamcrest.MatcherAssert.*;
 import static org.hamcrest.Matchers.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class SignupServiceImplTest {
 
     @InjectMocks
     SignupServiceImpl signupService;
+
+    @Mock
+    UserRepository userRepository;
 
     @Test
     void shouldSignupWhenValidRequest() {
@@ -41,9 +47,10 @@ public class SignupServiceImplTest {
 
     @Test
     void shouldThrowExceptionWhenSignupWithValidRequestButExistingEmail() {
-        var email = "eatatjoes@example.com";
+        var email = "eatatjoes@acme.com";
         var request = buildSignupRequest(email);
 
+        when(userRepository.existsByEmail(email)).thenReturn(true);
         EmailAlreadyExistsException thrown = Assertions.assertThrows(EmailAlreadyExistsException.class,
                 () -> signupService.signup(request));
 
