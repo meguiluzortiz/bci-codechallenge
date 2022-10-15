@@ -17,10 +17,10 @@ public class SwaggerConfig {
                 .info(new Info().title("BCI Challenge API")
                         .description("Spring sample application for BCI")
                         .version("v0.0.1")
-                        .license(new License().name("Apache 2.0").url("http://springdoc.org")))
+                        .license(new License().name("Apache 2.0").url("https://springdoc.org")))
                 .externalDocs(new ExternalDocumentation()
                         .description("Example Wiki Documentation")
-                        .url("http://example.com/docs"));
+                        .url("https://example.com/docs"));
     }
 
     @Bean

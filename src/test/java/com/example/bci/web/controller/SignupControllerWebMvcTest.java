@@ -22,11 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
-import static org.hamcrest.Matchers.hasItems;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -67,9 +66,22 @@ class SignupControllerWebMvcTest {
     }
 
     @Test
+    void shouldReturnBadRequestWhenSignupWithInvalidPasswordPattern() throws Exception {
+        var password = "strong-password";
+        var request = buildSignupRequest("example@example.com", password);
+        var errors = new String[] { String.format("password: Value '%s' must accomplish pattern", password) };
+
+        performPost(request)
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(is(HttpStatus.BAD_REQUEST.getReasonPhrase())))
+                .andExpect(jsonPath("$.errors").value(hasSize(errors.length)) )
+                .andExpect(jsonPath("$.errors", hasItems(errors)));
+    }
+
+    @Test
     void shouldReturnBadRequestWhenSignupWithValidRequestButExistingEmail() throws Exception {
         var email = "eatatjoes@acme.com";
-        var request = buildSignupRequest(email);
+        var request = buildSignupRequest(email, "1aA!4567");
         var errors = new String[] { String.format("Email %s already exists", email) };
 
         when(userRepository.existsByEmail(email)).thenReturn(true);
@@ -77,6 +89,19 @@ class SignupControllerWebMvcTest {
         performPost(request)
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(is(HttpStatus.BAD_REQUEST.getReasonPhrase())))
+                .andExpect(jsonPath("$.errors").value(hasSize(errors.length)) )
+                .andExpect(jsonPath("$.errors", hasItems(errors)));
+    }
+
+    @Test
+    void shouldReturnInternalServerErrorWhenSignupWithValidRequestButAnErrorHappens() throws Exception {
+        var request = buildSignupRequest("eatatjoes@acme.com", "1aA!4567");
+        var errors = new String[] { "An error occurred" };
+
+        doThrow(RuntimeException.class).when(signupService).signup(any(SignupRequest.class));
+
+        performPost(request)
+                .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.errors").value(hasSize(errors.length)) )
                 .andExpect(jsonPath("$.errors", hasItems(errors)));
     }
@@ -90,7 +115,7 @@ class SignupControllerWebMvcTest {
                 .created(rightNow).lastLogin(rightNow)
                 .isActive(true)
                 .build();
-        var request = buildSignupRequest("example@example.com");
+        var request = buildSignupRequest("example@example.com", "1aA!4567");
 
         doReturn(response).when(signupService).signup(any(SignupRequest.class));
 
@@ -102,19 +127,17 @@ class SignupControllerWebMvcTest {
                 .andExpect(jsonPath("$.isActive").value(is(true)));
     }
 
-
-
     ResultActions performPost(SignupRequest request) throws Exception {
         String content = objectMapper.writeValueAsString(request);
         return mockMvc.perform(post("/signup").content(content).contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print()).andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
-    SignupRequest buildSignupRequest(String email) {
+    SignupRequest buildSignupRequest(String email, String password) {
         return SignupRequest.builder()
                 .name("Joe")
                 .email(email)
-                .password("1aA!4567")
+                .password(password)
                 .phones(List.of(Phone.builder().number("1234567890").cityCode("LIM").countryCode("PE").build()))
                 .build();
     }

@@ -2,11 +2,14 @@ plugins {
 	id 'org.springframework.boot' version '2.7.4'
 	id 'io.spring.dependency-management' version '1.0.14.RELEASE'
 	id 'java'
+	id 'jacoco'
 }
 
 group = 'com.example'
 version = '0.0.1-SNAPSHOT'
-sourceCompatibility = '11'
+sourceCompatibility = JavaVersion.VERSION_11
+
+apply from: 'gradle/jacoco.gradle'
 
 configurations {
 	compileOnly {
@@ -29,8 +32,11 @@ dependencies {
 	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'net.datafaker:datafaker:1.5.0'
 }
 
-tasks.named('test') {
+test {
 	useJUnitPlatform()
 }
+
+defaultTasks 'clean', 'build', 'test'

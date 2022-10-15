@@ -14,10 +14,6 @@ public class ErrorResponse {
     @Schema(defaultValue = "Email eatatjoes@acme.com already exists")
     private List<String> errors;
 
-    public ErrorResponse(String message) {
-        this.message = message;
-    }
-
     public ErrorResponse(String message, List<String> errors) {
         this.message = message;
         this.errors = errors;

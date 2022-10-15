@@ -38,9 +38,6 @@ public class GlobalControllerAdviceHandler extends ResponseEntityExceptionHandle
         for (FieldError error : ex.getBindingResult().getFieldErrors()) {
             errors.add(error.getField() + ": " + error.getDefaultMessage());
         }
-        for (ObjectError error : ex.getBindingResult().getGlobalErrors()) {
-            errors.add(error.getObjectName() + ": " + error.getDefaultMessage());
-        }
 
         log.error(status.getReasonPhrase(), ex);
         ErrorResponse errorResponse = new ErrorResponse(status.getReasonPhrase(), errors);
@@ -49,7 +46,7 @@ public class GlobalControllerAdviceHandler extends ResponseEntityExceptionHandle
 
     @ExceptionHandler({Exception.class})
     public ResponseEntity<Object> handleAll(Exception ex, WebRequest request) {
-        ErrorResponse apiError = new ErrorResponse(ex.getLocalizedMessage(), List.of("error occurred"));
+        ErrorResponse apiError = new ErrorResponse(ex.getLocalizedMessage(), List.of("An error occurred"));
         return new ResponseEntity<>(apiError, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

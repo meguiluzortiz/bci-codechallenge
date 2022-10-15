@@ -1,0 +1,48 @@
+test {
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.8"
+}
+
+def jacocoExclusions = [
+        '**/web/request/*.class',
+        '**/web/response/*.class',
+        '**/entity/*.class',
+        '**/config/*Config.class',
+        '**/*Advice*.class',
+        '**/security/*AuthorityRoles.class',
+        '**/*Application.class'
+]
+
+jacocoTestReport {
+    dependsOn test
+    reports {
+        xml.required = false
+        csv.required = false
+        html.outputLocation = layout.buildDirectory.dir('jacocoHtml')
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
+}
+
+jacocoTestCoverageVerification {
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: jacocoExclusions)
+        }))
+    }
+    violationRules {
+        rule {
+            excludes = jacocoExclusions
+            limit {
+                minimum = 0.90
+            }
+        }
+    }
+}

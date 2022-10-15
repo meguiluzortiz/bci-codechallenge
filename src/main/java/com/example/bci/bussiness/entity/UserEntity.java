@@ -42,4 +42,5 @@ public class UserEntity {
     @Builder.Default
     @Column(columnDefinition = "boolean default true")
     private Boolean isActive = Boolean.TRUE;
+
 }

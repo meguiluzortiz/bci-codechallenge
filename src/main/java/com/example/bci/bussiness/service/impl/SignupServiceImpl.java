@@ -37,6 +37,7 @@ public class SignupServiceImpl implements SignupService {
 
         var entity = buildEntity(request);
         userRepository.save(entity);
+        log.debug("Entity created with id: {}", entity.getId());
 
         return SignupResponse.builder()
                 .id(entity.getId())
