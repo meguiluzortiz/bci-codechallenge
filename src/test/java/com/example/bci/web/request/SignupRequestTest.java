@@ -21,14 +21,14 @@ public class SignupRequestTest {
     class WhenInvalid {
 
         String[] errors = new String[] {
-                "name: must not be empty",
+                "username: must not be empty",
                 "email: must not be empty",
                 "password: must not be empty",
                 "phones: must not be empty"
         };
         
         @Test
-        void hasViolation() {
+        void shouldHasExpectedViolation() {
             SignupRequest dataClass = new SignupRequest();
 
             Set<ConstraintViolation<Object>> violations = validator.validate(dataClass);
@@ -36,7 +36,7 @@ public class SignupRequestTest {
         }
 
         @Test
-        void hasMessage() {
+        void shouldHasExpectedMessage() {
             SignupRequest dataClass = new SignupRequest();
 
             Set<ConstraintViolation<Object>> violations = validator.validate(dataClass);
@@ -49,9 +49,9 @@ public class SignupRequestTest {
     @Nested
     class WhenValid {
         @Test
-        void doesNotHaveViolations() {
+        void shouldNotHaveViolations() {
             SignupRequest dataClass = new SignupRequest();
-            dataClass.setName(faker.name().firstName());
+            dataClass.setUsername(faker.name().firstName());
             dataClass.setEmail(faker.internet().emailAddress());
             dataClass.setPassword("1aA!4567");
             dataClass.setPhones(List.of(

@@ -59,7 +59,7 @@ public class SignupServiceImplTest {
 
     SignupRequest buildSignupRequest(String email) {
         return SignupRequest.builder()
-                .name("Joe")
+                .username("Joe")
                 .email(email)
                 .password("1aA!4567")
                 .phones(List.of(Phone.builder().number("1234567890").cityCode("LIM").countryCode("PE").build()))

@@ -51,7 +51,7 @@ class SignupControllerWebMvcTest {
     @Test
     void shouldReturnBadRequestWhenSignupWithEmptyRequest() throws Exception {
         var errors = new String[] {
-                "name: must not be empty",
+                "username: must not be empty",
                 "email: must not be empty",
                 "password: must not be empty",
                 "phones: must not be empty"
@@ -135,7 +135,7 @@ class SignupControllerWebMvcTest {
 
     SignupRequest buildSignupRequest(String email, String password) {
         return SignupRequest.builder()
-                .name("Joe")
+                .username("Joe")
                 .email(email)
                 .password(password)
                 .phones(List.of(Phone.builder().number("1234567890").cityCode("LIM").countryCode("PE").build()))

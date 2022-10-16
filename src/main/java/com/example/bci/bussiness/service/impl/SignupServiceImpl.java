@@ -9,7 +9,6 @@ import com.example.bci.web.request.SignupRequest;
 import com.example.bci.web.response.SignupResponse;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -52,7 +51,7 @@ public class SignupServiceImpl implements SignupService {
         var rightNow = LocalDateTime.now();
         return UserEntity.builder()
                 .id(UUID.randomUUID().toString())
-                .name(request.getName())
+                .username(request.getUsername())
                 .email(email)
                 .password(request.getPassword())
                 .phones(request.getPhones()

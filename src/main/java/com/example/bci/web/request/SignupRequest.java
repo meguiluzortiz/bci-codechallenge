@@ -7,9 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.SchemaProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,15 +21,15 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SignupRequest {
 
-    @Schema(defaultValue = "Kyle")
+    @Schema(defaultValue = "mkyle")
     @NotEmpty
-    @Size(max = 20, message = "The name '${validatedValue}' must be between {min} and {max} characters long")
-    private String name;
+    @Size(max = 20, message = "The username '${validatedValue}' must be between {min} and {max} characters long")
+    private String username;
 
     @Schema(defaultValue = "eatatkyles@acme.com", description = "Email 'eatatjoes@acme.com' is already registered")
     @NotEmpty
     @Pattern(regexp = Constants.PATTERN_EMAIL)
-    @Size(min = 5, max = 100, message = "The email '${validatedValue}' must be between {min} and {max} characters long")
+    @Size(min = 5, max = 80, message = "The email '${validatedValue}' must be between {min} and {max} characters long")
     private String email;
 
     @Schema(defaultValue = "1aA!4567", description = "Password must follow pattern in application.yml file")
