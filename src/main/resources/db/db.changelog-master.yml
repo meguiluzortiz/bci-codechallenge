@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - changeSet:
+       id: create-table-phone-and-user
+       author: manuel_eguiluz
+       changes:
+       - sqlFile:
+            dbms: h2
+            encoding: utf8
+            path: changelog/01.-create-phone-and-user.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
+  - changeSet:
+       id: insert-data-phone-and-user
+       author: manuel_eguiluz
+       changes:
+       - sqlFile:
+            dbms: h2
+            encoding: utf8
+            path: changelog/02.-insert-data-phone-and-user.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
