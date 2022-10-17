@@ -12,6 +12,7 @@ def jacocoExclusions = [
         '**/entity/*.class',
         '**/config/*Config.class',
         '**/*Advice*.class',
+        '**/*Properties.class',
         '**/security/*AuthorityRoles.class',
         '**/*Application.class'
 ]

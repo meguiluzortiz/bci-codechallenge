@@ -5,6 +5,7 @@ import com.example.bci.bussiness.entity.UserEntity;
 import com.example.bci.bussiness.exception.EmailAlreadyExistsException;
 import com.example.bci.bussiness.repository.UserRepository;
 import com.example.bci.bussiness.service.SignupService;
+import com.example.bci.security.AuthenticationService;
 import com.example.bci.web.request.SignupRequest;
 import com.example.bci.web.response.SignupResponse;
 
@@ -23,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class SignupServiceImpl implements SignupService {
 
+    private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
 
     @Override
@@ -34,13 +36,15 @@ public class SignupServiceImpl implements SignupService {
             throw new EmailAlreadyExistsException(String.format("Email %s already exists", email));
         }
 
+        String jwt = authenticationService.login(email, request.getPassword());
+
         var entity = buildEntity(request);
         userRepository.save(entity);
         log.debug("Entity created with id: {}", entity.getId());
 
         return SignupResponse.builder()
                 .id(entity.getId())
-                .token(UUID.randomUUID().toString())
+                .token(jwt)
                 .created(entity.getCreated().toString()).lastLogin(entity.getLastLogin().toString())
                 .isActive(entity.getIsActive())
                 .build();
@@ -51,7 +55,7 @@ public class SignupServiceImpl implements SignupService {
         var rightNow = LocalDateTime.now();
         return UserEntity.builder()
                 .id(UUID.randomUUID().toString())
-                .username(request.getUsername())
+                .name(request.getName())
                 .email(email)
                 .password(request.getPassword())
                 .phones(request.getPhones()

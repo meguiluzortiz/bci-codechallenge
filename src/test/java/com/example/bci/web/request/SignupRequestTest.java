@@ -21,7 +21,7 @@ public class SignupRequestTest {
     class WhenInvalid {
 
         String[] errors = new String[] {
-                "username: must not be empty",
+                "name: must not be empty",
                 "email: must not be empty",
                 "password: must not be empty",
                 "phones: must not be empty"
@@ -51,7 +51,7 @@ public class SignupRequestTest {
         @Test
         void shouldNotHaveViolations() {
             SignupRequest dataClass = new SignupRequest();
-            dataClass.setUsername(faker.name().firstName());
+            dataClass.setName(faker.name().firstName());
             dataClass.setEmail(faker.internet().emailAddress());
             dataClass.setPassword("1aA!4567");
             dataClass.setPhones(List.of(

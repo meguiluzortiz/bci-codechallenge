@@ -3,15 +3,15 @@ package com.example.bci.web.controller;
 import com.example.bci.bussiness.repository.UserRepository;
 import com.example.bci.bussiness.service.SignupService;
 import com.example.bci.bussiness.service.impl.SignupServiceImpl;
+import com.example.bci.security.AuthenticationService;
 import com.example.bci.web.request.Phone;
 import com.example.bci.web.request.SignupRequest;
 import com.example.bci.web.response.SignupResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.UUID;
+import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
@@ -22,19 +22,19 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
+import java.time.LocalDate;
+import java.util.List;
+import java.util.UUID;
+
 import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(controllers = SignupController.class)
+@WebMvcTest(controllers = SignupController.class, excludeAutoConfiguration = { SecurityAutoConfiguration.class })
 @Import({ SignupServiceImpl.class })
-class SignupControllerWebMvcTest {
+class SignupControllerITest {
 
     @SpyBean
     SignupService signupService;
@@ -42,16 +42,21 @@ class SignupControllerWebMvcTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    AuthenticationService authenticationService;
+
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
+    Faker faker = new Faker();
+
     @Test
     void shouldReturnBadRequestWhenSignupWithEmptyRequest() throws Exception {
         var errors = new String[] {
-                "username: must not be empty",
+                "name: must not be empty",
                 "email: must not be empty",
                 "password: must not be empty",
                 "phones: must not be empty"
@@ -135,7 +140,7 @@ class SignupControllerWebMvcTest {
 
     SignupRequest buildSignupRequest(String email, String password) {
         return SignupRequest.builder()
-                .username("Joe")
+                .name(faker.name().firstName())
                 .email(email)
                 .password(password)
                 .phones(List.of(Phone.builder().number("1234567890").cityCode("LIM").countryCode("PE").build()))

@@ -17,7 +17,7 @@ create table testdb.USERS (
    IS_ACTIVE boolean default true,
    LAST_LOGIN timestamp,
    MODIFIED timestamp,
-   USERNAME varchar(20),
+   NAME varchar(20),
    PASSWORD varchar(16),
    primary key (ID)
 );

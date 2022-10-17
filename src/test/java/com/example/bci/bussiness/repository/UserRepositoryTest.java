@@ -32,7 +32,7 @@ class UserRepositoryTest {
         LocalDateTime now = LocalDateTime.now();
         lastEntity = UserEntity.builder()
                 .id(randomId)
-                .username(faker.name().firstName())
+                .name(faker.name().firstName())
                 .email(email)
                 .password(faker.internet().password(8, 12, true, true, true))
                 .phones(List.of(
