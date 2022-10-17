@@ -4,6 +4,8 @@ import com.example.bci.security.JwtAuthenticationEntryPoint;
 import com.example.bci.security.JwtAuthenticationFilter;
 import com.example.bci.security.JwtProperties;
 import com.example.bci.security.JwtUtils;
+import io.jsonwebtoken.JwtParser;
+import io.jsonwebtoken.Jwts;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -71,8 +73,13 @@ public class SecurityConfig {
     }
 
     @Bean
+    public JwtParser jwtParser() {
+        return Jwts.parser();
+    }
+
+    @Bean
     public JwtUtils jwtUtils(JwtProperties jwtProperties) {
-        return new JwtUtils(jwtProperties);
+        return new JwtUtils(jwtProperties, jwtParser());
     }
 
     @Bean

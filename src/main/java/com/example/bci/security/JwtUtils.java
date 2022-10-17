@@ -3,17 +3,11 @@ package com.example.bci.security;
 import java.util.Date;
 import java.util.function.Function;
 
+import io.jsonwebtoken.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -21,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 public class JwtUtils {
 
     private final JwtProperties jwtProperties;
-
+    private final JwtParser jwtParser;
 
     public String generateJwtToken(Authentication authentication) {
 
@@ -36,17 +30,19 @@ public class JwtUtils {
                 .compact();
     }
 
+    public String getUserNameFromJwtToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+
     private <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
     private Claims getAllClaimsFromToken(String token) {
-        return Jwts.parser().setSigningKey(jwtProperties.getSecret()).parseClaimsJws(token).getBody();
-    }
-
-    public String getUserNameFromJwtToken(String token) {
-        return getClaimFromToken(token, Claims::getSubject);
+        var parser = jwtParser.setSigningKey(jwtProperties.getSecret());
+        var claims = parser.parseClaimsJws(token);
+        return claims.getBody();
     }
 
     public boolean validateJwtToken(String authToken) {
