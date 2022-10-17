@@ -45,3 +45,7 @@ pattern:
     # 8-16 characters long
     # https://stackoverflow.com/a/72686232/3013786
     password: ^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$
+
+jwt:
+  secret: secret
+  expiration: 3600000

@@ -21,10 +21,10 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SignupRequest {
 
-    @Schema(defaultValue = "mkyle")
+    @Schema(defaultValue = "Joe")
     @NotEmpty
-    @Size(max = 20, message = "The username '${validatedValue}' must be between {min} and {max} characters long")
-    private String username;
+    @Size(max = 20, message = "The name '${validatedValue}' must be between {min} and {max} characters long")
+    private String name;
 
     @Schema(defaultValue = "eatatkyles@acme.com", description = "Email 'eatatjoes@acme.com' is already registered")
     @NotEmpty

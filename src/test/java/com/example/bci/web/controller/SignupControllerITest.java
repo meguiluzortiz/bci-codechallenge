@@ -3,10 +3,12 @@ package com.example.bci.web.controller;
 import com.example.bci.bussiness.repository.UserRepository;
 import com.example.bci.bussiness.service.SignupService;
 import com.example.bci.bussiness.service.impl.SignupServiceImpl;
+import com.example.bci.security.AuthenticationService;
 import com.example.bci.web.request.Phone;
 import com.example.bci.web.request.SignupRequest;
 import com.example.bci.web.response.SignupResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.datafaker.Faker;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = SignupController.class, excludeAutoConfiguration = { SecurityAutoConfiguration.class })
 @Import({ SignupServiceImpl.class })
-class HelloWorldControllerWebMvcTest {
+class SignupControllerITest {
 
     @SpyBean
     SignupService signupService;
@@ -40,16 +42,21 @@ class HelloWorldControllerWebMvcTest {
     @MockBean
     UserRepository userRepository;
 
+    @MockBean
+    AuthenticationService authenticationService;
+
     @Autowired
     MockMvc mockMvc;
 
     @Autowired
     ObjectMapper objectMapper;
 
+    Faker faker = new Faker();
+
     @Test
     void shouldReturnBadRequestWhenSignupWithEmptyRequest() throws Exception {
         var errors = new String[] {
-                "username: must not be empty",
+                "name: must not be empty",
                 "email: must not be empty",
                 "password: must not be empty",
                 "phones: must not be empty"
@@ -133,7 +140,7 @@ class HelloWorldControllerWebMvcTest {
 
     SignupRequest buildSignupRequest(String email, String password) {
         return SignupRequest.builder()
-                .username("Joe")
+                .name(faker.name().firstName())
                 .email(email)
                 .password(password)
                 .phones(List.of(Phone.builder().number("1234567890").cityCode("LIM").countryCode("PE").build()))

@@ -1,6 +1,7 @@
 package com.example.bci.web.controller;
 
 import com.example.bci.config.SecurityConfig;
+import com.example.bci.security.JwtProperties;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -14,8 +15,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = HelloWorldController.class)
-@Import(SecurityConfig.class)
-class SignupControllerWebMvcTest {
+@Import({SecurityConfig.class, JwtProperties.class})
+class HelloWorldControllerITest {
 
     @Autowired
     MockMvc mockMvc;
