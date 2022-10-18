@@ -5,6 +5,10 @@ Este es un desafio en el proceso de aplicación al [Banco BCI](https://www.bci.c
 
 ![swagger](./docs/swagger.png)
 
+# TO DO.
+
+- Actualizar README.md
+
 # Funcionalidades
 
 - Registro de nuevos usuarios usando Spring Data JPA
